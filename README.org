@@ -1,0 +1,140 @@
+* Conan Recipes for many C++ Packages 
+** Package cpp-httplib 
+*** Overview 
+
+The library *cpp-httplib* is a single-file header-only cross-platform
+library for building HTTP/HTTPS standalone servers. 
+
+ + Repository: https://github.com/yhirose/cpp-httplib
+
+ + Conan recipe: file:cpp-httplib
+*** Testing package
+
+Enter package directory 
+
+#+BEGIN_SRC sh 
+  $ cd cpp-httplib && conan create . cpp-httplib/testing
+#+END_SRC
+
+This command downloads the library source from the remote repository;
+installs the library in the local cache package directory and then
+runs the test executable [[file:cpp-httplib/test_package/example.cpp][file:cpp-httplib/test_package/example.cpp]],
+
+File: example.cpp 
+
+#+BEGIN_SRC cpp 
+  #include <iostream> 
+  #include <httplib.h>
+
+  int main(void)
+  {
+      using namespace httplib;
+
+      std::puts("\n\n ===================================");
+      std::puts(" [INFO] Starting Web server. OK");
+    
+      Server svr;
+
+      svr.Get("/hi", [](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /hi");
+          res.set_content("Hello World!", "text/plain");
+      });
+
+      svr.Get(R"(/numbers/(\d+))", [&](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /numbers");			  
+          auto numbers = req.matches[1];
+          res.set_content(numbers, "text/plain");
+      });
+
+      svr.Get("/stop", [&](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /stop");			  
+          svr.stop();
+      });
+
+      std::puts(" [INFO] Running server - listening port 1234");			  
+      svr.listen("localhost", 1234);
+  }
+#+END_SRC
+
+If the command runs successfuly, the executable 'example' shows the
+following message: 
+
+#+BEGIN_SRC sh 
+  Scanning dependencies of target example
+  [ 50%] Building CXX object CMakeFiles/example.dir/example.cpp.o
+  [100%] Linking CXX executable bin/example
+  [100%] Built target example
+  cpp-httplib/0.1@cpp-httplib/testing (test package): Running test()
+
+
+   ===================================
+   [INFO] Starting Web server. OK
+   [INFO] Running server - listening port 1234
+#+END_SRC
+
+Testing with curl in another terminal: 
+ 
+ + Route: /hi => URL ~http://localhost:1234/hi~ 
+
+#+BEGIN_SRC sh 
+  $ curl -v localhost:1234/hi
+
+  *   Trying ::1...
+  * TCP_NODELAY set
+  * Connected to localhost (::1) port 1234 (#0)
+  > GET /hi HTTP/1.1
+  > Host: localhost:1234
+  > User-Agent: curl/7.59.0
+  > Accept: */*
+  > 
+  < HTTP/1.1 200 OK
+  < Accept-Ranges: bytes
+  < Content-Length: 12
+  < Content-Type: text/plain
+  < 
+  * Connection #0 to host localhost left intact
+  Hello World!
+#+END_SRC
+
+ + Route: /numbers/<NUMBER> => url: http://localhost:1234/numbers/2431 
+
+#+BEGIN_SRC sh 
+  $ curl -v localhost:1234/numbers/2431
+  *   Trying ::1...
+  * TCP_NODELAY set
+  * Connected to localhost (::1) port 1234 (#0)
+  > GET /numbers/2431 HTTP/1.1
+  > Host: localhost:1234
+  > User-Agent: curl/7.59.0
+  > Accept: */*
+  > 
+  < HTTP/1.1 200 OK
+  < Accept-Ranges: bytes
+  < Content-Length: 4
+  < Content-Type: text/plain
+  < 
+  * Connection #0 to host localhost left intact
+  2431
+#+END_SRC
+
+*** Installing Locally 
+
+Run the command: 
+
+#+BEGIN_SRC sh 
+  $ make install-httplib
+#+END_SRC
+
+Output: 
+
+#+BEGIN_SRC sh 
+  $ make install-httplib
+  conan export ./cpp-httplib local/testing 
+  Exporting package recipe
+  Linter warnings
+      WARN: Linter. Line 1: Unused import os
+      WARN: Linter. Line 2: Unused CMake imported from conans
+      WARN: Linter. Line 2: Unused tools imported from conans
+  cpp-httplib/0.1@local/testing: A new conanfile.py version was exported
+  cpp-httplib/0.1@local/testing: Folder: /home/archbox/.conan/data/cpp-httplib/0.1/local/testing/export
+#+END_SRC
