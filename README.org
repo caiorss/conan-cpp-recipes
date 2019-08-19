@@ -1,5 +1,5 @@
 * Conan Recipes for many C++ Packages 
-** Package cpp-httplib 
+** Package cpp-httplib - header-only http server 
 *** Overview 
 
 The library *cpp-httplib* is a single-file header-only cross-platform
@@ -119,6 +119,9 @@ Testing with curl in another terminal:
 
 *** Installing Locally 
 
+Conan reference for package: 
+  + *cpp-httplib/0.1@local/testing*
+
 Run the command: 
 
 #+BEGIN_SRC sh 
@@ -128,13 +131,129 @@ Run the command:
 Output: 
 
 #+BEGIN_SRC sh 
-  $ make install-httplib
-  conan export ./cpp-httplib local/testing 
+  $ make install
+  conan export ./recipes/httplib local/testing 
   Exporting package recipe
   Linter warnings
       WARN: Linter. Line 1: Unused import os
       WARN: Linter. Line 2: Unused CMake imported from conans
       WARN: Linter. Line 2: Unused tools imported from conans
-  recipes/httplib0.1@local/testing: A new conanfile.py version was exported
-  recipes/httplib0.1@local/testing: Folder: /home/archbox/.conan/data/cpp-httplib/0.1/local/testing/export
+  cpp-httplib/0.1@local/testing: A new conanfile.py version was exported
+  cpp-httplib/0.1@local/testing: Folder: /home/archbox/.conan/data/cpp-httplib/0.1/local/testing/export
+#+END_SRC
+
+Checking Local Installation: 
+
+#+BEGIN_SRC sh 
+  $ conan info cpp-httplib/0.1@local/testing
+  cpp-httplib/0.1@local/testing
+      ID: 5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9
+      BuildID: None
+      Remote: None
+      URL: <Package recipe repository url here, for issues about the package>
+      License: Public Domain Package Recipe
+      Author: Caio Rodrigues
+      Topics: http, web, server
+      Recipe: Cache
+      Binary: Missing
+      Binary remote: None
+      Creation date: 2019-08-19 14:06:24
+#+END_SRC
+
+*** Building sample project 
+
+Note: It assumes that the package has already been installed with: 
+
+#+BEGIN_SRC sh 
+  $ make install-httplib 
+#+END_SRC
+
+ + Project directory: [[file:sample-projects/httplib][file:sample-projects/httplib]] 
+
+File: CMakeLists.txt 
+
+#+BEGIN_SRC cmake 
+   cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+   project(cmake-experiment)
+
+   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_VERBOSE_MAKEFILE ON)
+
+   # ============= Conan Bootstrap =============================#
+
+   # Download automatically, you can also just copy the conan.cmake file
+   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+      message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+      file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.13/conan.cmake"
+                    "${CMAKE_BINARY_DIR}/conan.cmake")
+   endif()
+
+   include(${CMAKE_BINARY_DIR}/conan.cmake)
+
+   conan_cmake_run( REQUIRES
+                   # Libraries to be installed locally
+                   cpp-httplib/0.1@local/testing
+
+                   BASIC_SETUP
+                   BUILD missing
+                   )
+
+   #  ========= Target Configuration ==================== #
+
+   add_executable(server server.cpp)
+   target_link_libraries(server pthread)
+#+END_SRC
+
+File: server.cpp 
+
+#+BEGIN_SRC cpp 
+  #include <iostream> 
+  #include <httplib.h>
+
+  int main(void)
+  {
+      using namespace httplib;
+
+      std::puts("\n\n ===================================");
+      std::puts(" [INFO] Starting Web server. OK");
+    
+      Server svr;
+
+      svr.Get("/hi", [](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /hi");
+          res.set_content("Hello World!", "text/plain");
+      });
+
+      svr.Get(R"(/numbers/(\d+))", [&](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /numbers");			  
+          auto numbers = req.matches[1];
+          res.set_content(numbers, "text/plain");
+      });
+
+      svr.Get("/stop", [&](const Request& req, Response& res) {
+          std::puts(" [INFO] Server route /stop");			  
+          svr.stop();
+      });
+
+      std::puts(" [INFO] Running server - listening port 1234");			  
+      svr.listen("localhost", 1234);
+  }
+#+END_SRC
+
+Build project: 
+
+#+BEGIN_SRC sh 
+  $ cd sample-projects/httplib 
+  $ cmake -H. -B_build -DCMAKE_BUILD_TYPE=Debug
+  $ cmake --build _build --target  
+#+END_SRC
+
+Run Server: 
+
+#+BEGIN_SRC sh 
+  $ _build/bin/server 
+
+   ===================================
+   [INFO] Starting Web server. OK
+   [INFO] Running server - listening port 1234
 #+END_SRC
