@@ -7,7 +7,7 @@ library for building HTTP/HTTPS standalone servers.
 
  + Repository: https://github.com/yhirose/cpp-httplib
 
- + Conan recipe: file:cpp-httplib
+ + Conan recipe: [[file:recipes/httplib][file:recipes/httplib]]
 *** Testing package
 
 Enter package directory 
@@ -18,7 +18,7 @@ Enter package directory
 
 This command downloads the library source from the remote repository;
 installs the library in the local cache package directory and then
-runs the test executable [[file:recipes/httplibtest_package/example.cpp][file:recipes/httplibtest_package/example.cpp]],
+runs the test executable [[file:recipes/httplib/test_package/example.cpp][file:recipes/httplib/test_package/example.cpp]],
 
 File: example.cpp 
 
