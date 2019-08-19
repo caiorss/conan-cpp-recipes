@@ -1,0 +1,16 @@
+*.a
+*.obj 
+*.dll 
+*.so 
+*.exe
+*.bin
+*.zip 
+*.tgz
+*.tar.gz
+build/*
+test_package/build/*
+__pycache__/*
+*.pyc 
+#*
+~*
+~*
