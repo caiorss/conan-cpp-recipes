@@ -7,8 +7,9 @@
 *.zip 
 *.tgz
 *.tar.gz
-build/*
+*build/*
 test_package/build/*
+cpp-httplib/test_package/build/*
 __pycache__/*
 *.pyc 
 #*
