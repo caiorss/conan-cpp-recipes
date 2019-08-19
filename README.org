@@ -13,12 +13,12 @@ library for building HTTP/HTTPS standalone servers.
 Enter package directory 
 
 #+BEGIN_SRC sh 
-  $ cd cpp-httplib && conan create . cpp-httplib/testing
+  $ cd cpp-httplib && conan create . recipes/httplibtesting
 #+END_SRC
 
 This command downloads the library source from the remote repository;
 installs the library in the local cache package directory and then
-runs the test executable [[file:cpp-httplib/test_package/example.cpp][file:cpp-httplib/test_package/example.cpp]],
+runs the test executable [[file:recipes/httplibtest_package/example.cpp][file:recipes/httplibtest_package/example.cpp]],
 
 File: example.cpp 
 
@@ -64,7 +64,7 @@ following message:
   [ 50%] Building CXX object CMakeFiles/example.dir/example.cpp.o
   [100%] Linking CXX executable bin/example
   [100%] Built target example
-  cpp-httplib/0.1@cpp-httplib/testing (test package): Running test()
+  recipes/httplib0.1@cpp-httplib/testing (test package): Running test()
 
 
    ===================================
@@ -135,6 +135,6 @@ Output:
       WARN: Linter. Line 1: Unused import os
       WARN: Linter. Line 2: Unused CMake imported from conans
       WARN: Linter. Line 2: Unused tools imported from conans
-  cpp-httplib/0.1@local/testing: A new conanfile.py version was exported
-  cpp-httplib/0.1@local/testing: Folder: /home/archbox/.conan/data/cpp-httplib/0.1/local/testing/export
+  recipes/httplib0.1@local/testing: A new conanfile.py version was exported
+  recipes/httplib0.1@local/testing: Folder: /home/archbox/.conan/data/cpp-httplib/0.1/local/testing/export
 #+END_SRC
