@@ -1,4 +1,29 @@
 * Conan Recipes for many C++ Packages 
+** Install all conan recipes 
+
+Enter in this directory and run the command: 
+
+#+BEGIN_SRC sh 
+  $ make install 
+#+END_SRC
+
+** Create a new recipe 
+
+Create recipe project skeleton: 
+
+#+BEGIN_SRC sh 
+  $ mkdir -p recipes/<RECIPE_NAME> && cd recipes/<RECIPE_NAME> 
+  $ conan new <RECIPE_NAME>/<VERSION> -t 
+#+END_SRC
+
+Example: 
+
+#+BEGIN_SRC sh 
+  $ mkdir -p recipes/mylibrary && cd recipes/mylibrary 
+  $ conan new mylibrary/0.1 -t 
+#+END_SRC
+
+* Recipes 
 ** Package cpp-httplib - header-only http server 
 *** Overview 
 
