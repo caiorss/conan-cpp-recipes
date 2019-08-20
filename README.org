@@ -335,4 +335,59 @@ Library Repository:
 Recipe: 
  +  [[file:recipes/cpptoml][file:recipes/cpptoml]]  
 
+ *Install Cpptoml Recipe* 
 
+#+BEGIN_SRC sh 
+  $ make install-cpptoml 
+#+END_SRC
+
+ *Test Cpptoml Recipe*  
+
+It run the file  [[file:recipes/cpptoml/test_package/example.cpp][file:recipes/cpptoml/test_package/example.cpp]]
+
+#+BEGIN_SRC sh 
+   $ make test-cpptoml
+#+END_SRC
+
+If the test is successful, it produces the following output: 
+
+#+BEGIN_SRC sh 
+   --- TOML Configuration data read from input stream ------
+   => loglevel = 10
+   => userName = Somebody else
+   => file     = C:\Users\somebody\storage\data.log
+   => port     = 9090
+#+END_SRC
+
+ *CMakeLists.txt - Usage Example:* 
+
+#+BEGIN_SRC cmake 
+   cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+   project(cmake-experiment)
+
+   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_VERBOSE_MAKEFILE ON)
+
+   # ============= Conan Bootstrap =============================#
+
+   # Download automatically, you can also just copy the conan.cmake file
+   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+      message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+      file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.13/conan.cmake"
+                    "${CMAKE_BINARY_DIR}/conan.cmake")
+   endif()
+
+   include(${CMAKE_BINARY_DIR}/conan.cmake)
+
+   conan_cmake_run( REQUIRES
+                   # Libraries to be installed locally
+                   cpptoml/0.1@local/testing
+
+                   BASIC_SETUP
+                   BUILD missing
+                   )
+
+   #  ========= Target Configuration ==================== #
+   add_executable(server server.cpp)
+   target_link_libraries(server pthread)
+#+END_SRC
