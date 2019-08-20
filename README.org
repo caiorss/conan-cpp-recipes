@@ -16,12 +16,51 @@ Create recipe project skeleton:
   $ conan new <RECIPE_NAME>/<VERSION> -t 
 #+END_SRC
 
-Example: 
+Modify the files: 
+
+  + recipes/<RECIPE_NAME>/conanfile.py
+  + recipes/<RECIPE_NAME>/test_package/example.cpp
+  + recipes/<RECIPE_NAME>/test_package/CMakeLists.txt
+ 
+Test the package with: 
+
+#+BEGIN_SRC sh 
+  $ conan create recipes/<RECIPE_NAME> <RECIPE_NAME>/testing
+#+END_SRC
+
+It will attempt to install the package and run the file _example.cpp_ in
+the directory recipes/<RECIPE_NAME>/test_package/example.cpp. If the
+package code correct, the file example.cpp will be compiled and
+executed.  
+
+ *Example:*
 
 #+BEGIN_SRC sh 
   $ mkdir -p recipes/mylibrary && cd recipes/mylibrary 
   $ conan new mylibrary/0.1 -t 
 #+END_SRC
+
+It generates the following directory structure within the directory
+recpies/mylibrary
+
+#+BEGIN_SRC sh 
+  $ cd recipes/mylibrary 
+
+  $ tree 
+  .
+  ├── conanfile.py
+  └── test_package
+      ├── CMakeLists.txt
+      ├── conanfile.py
+      └── example.cpp
+
+  1 directory, 4 files
+#+END_SRC
+
+Now modify the following files: 
+
+  + recipes/mylibrary/conanfile.py
+  + recipes/mylibrary/test_package/example.cpp 
 
 * Recipes 
 ** Package cpp-httplib - header-only http server 
@@ -282,3 +321,18 @@ Run Server:
    [INFO] Starting Web server. OK
    [INFO] Running server - listening port 1234
 #+END_SRC
+** Package cpptoml - header-only TOML configuration parser 
+
+CPPtoml is header-only library for the TOML configuration format which
+a format similar to Windows INI, however it is platform-agnostic and
+standardized. This advantage of this format is that is more
+human-readable and more lightweight than XML or Json and less error
+prone than YAML. 
+
+Library Repository: 
+ + https://github.com/skystrife/cpptoml
+
+Recipe: 
+ +  [[file:recipes/cpptoml][file:recipes/cpptoml]]  
+
+
