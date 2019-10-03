@@ -15,3 +15,5 @@ __pycache__/*
 #*
 ~*
 *~
+recipes/served/test_package/build/*
+recipes/cpptoml/test_package/build/*
