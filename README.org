@@ -1,3 +1,4 @@
+
 * Conan Recipes for many C++ Packages 
 ** Install all conan recipes 
 
@@ -388,6 +389,93 @@ If the test is successful, it produces the following output:
                    )
 
    #  ========= Target Configuration ==================== #
-   add_executable(server server.cpp)
-   target_link_libraries(server pthread)
+   add_executable(cpptoml1 example.cpp)
+#+END_SRC
+** Package served - http rest web server library 
+
+ + "Served is a C++ library for building high performance RESTful web
+   servers. Served builds upon Boost.ASIO to provide a simple API for
+   developers to create HTTP services in C++. Features:  HTTP 1.1
+   compatible request parser;  Middleware / plug-ins;  Flexible
+   handler API;  Cross-platform compatible"
+
+Repository: 
+ + https://github.com/meltwater/served 
+
+Recipe: 
+ +  [[file:recipes/served][file:recipes/served]]  
+
+
+ *Install Served Recipe* 
+
+#+BEGIN_SRC sh 
+  $ make install-served
+#+END_SRC
+
+ *Test Served Recipe*  
+
+#+BEGIN_SRC sh 
+   $ make test-served 
+#+END_SRC
+
+ *CMakeLists.txt - Usage Example:* 
+
+#+BEGIN_SRC cmake 
+   cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+   project(cmake-experiment)
+
+   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_VERBOSE_MAKEFILE ON)
+
+   # ============= Conan Bootstrap =============================#
+
+   # Download automatically, you can also just copy the conan.cmake file
+   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+      message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+      file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.13/conan.cmake"
+                    "${CMAKE_BINARY_DIR}/conan.cmake")
+   endif()
+
+   include(${CMAKE_BINARY_DIR}/conan.cmake)
+
+   conan_cmake_run( REQUIRES
+                   # Libraries to be installed locally
+                   served/0.1@local/testing
+
+                   BASIC_SETUP
+                   BUILD missing
+                   )
+
+   #  ========= Target Configuration ==================== #
+   add_executable(server1 example.cpp)
+   target_link_libraries(server1 pthread served)
+#+END_SRC
+
+File: example.cpp 
+
+#+BEGIN_SRC cpp 
+  #include <served/served.hpp>
+
+  int main(int argc, char const* argv[]) {
+          // Create a multiplexer for handling requests
+          served::multiplexer mux;
+
+          // GET /hello
+          mux.handle("/hello")
+                  .get([](served::response & res, const served::request & req) {
+                          res << "Hello world!";
+                  });
+
+          // Create the server and run with 10 handler threads.
+          served::net::server server("127.0.0.1", "9080", mux);
+          server.run(10);
+	
+          return (EXIT_SUCCESS);
+  }
+#+END_SRC
+
+Test the server with: 
+
+#+BEGIN_SRC sh 
+  $ curl -v localhost:9080/hello 
 #+END_SRC
