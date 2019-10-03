@@ -4,13 +4,17 @@ import os
 import shutil
 
 class ServedLibConan(ConanFile):
-    name = "served"
-    version = "1.6"
-    url="https://github.com/Wi3ard/conan-cpp-netlib"
+    name       = "served"
+    version    = "1.6"
+    url        ="https://github.com/Wi3ard/conan-cpp-netlib"
     generators = "cmake", "txt"
-    settings = "os", "compiler", "build_type", "arch"
+    settings   = "os", "compiler", "build_type", "arch"
     # requires = "boost/1.71.0@conan/stable"
-    requires = "boost/1.69.0@conan/stable"
+    requires   = "boost/1.69.0@conan/stable"
+
+    topics     = ("server", "http", "rest", "boost-asio")
+    author     = "Caio Rodrigues - caiorss.rodrigues@gmail.com"
+    license    = "Public Domain"
 
     description = """ A restful HTTP library built on top of Boost.Asio 
                       - https://github.com/meltwater/served  """
